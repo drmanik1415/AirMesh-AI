@@ -5,3 +5,5 @@ scikit-learn
 joblib
 matplotlib
 requests
+fastapi
+uvicorn
