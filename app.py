@@ -6,6 +6,9 @@ import joblib
 import matplotlib.pyplot as plt
 import pandas as pd
 
+from fastapi import FastAPI
+import uvicorn
+
 
 # ============================================================
 # AIRMESH AI — DEPLOYMENT CONFIGURATION
@@ -483,7 +486,40 @@ Master ESP32 continues local monitoring.
         create_co2_chart()
     )
 
+def get_master_decision():
 
+    results = {}
+
+    for zone in [
+        "Zone A",
+        "Zone B",
+        "Zone C"
+    ]:
+
+        results[zone] = analyze_zone(
+            demo_streams[zone],
+            zone
+        )
+
+    priority_zone = max(
+        results,
+        key=lambda z:
+            results[z]["probability_percent"]
+    )
+
+    highest = results[priority_zone]
+
+    return {
+        "priority_zone": priority_zone,
+        "risk_probability": round(
+            highest["probability_percent"],
+            2
+        ),
+        "early_warning": highest["early_warning"],
+        "ml_status": highest["ml_status"],
+        "environmental_state":
+            highest["environmental_state_name"]
+    }
 # ============================================================
 # GRADIO USER INTERFACE
 # ============================================================
@@ -597,6 +633,27 @@ reset_button.click(
 
 
 # ============================================================
+# API FOR MASTER ESP32
+# ============================================================
+
+api = FastAPI(
+    title="AirMesh AI API"
+)
+
+
+@api.get("/api/decision")
+def api_decision():
+    return get_master_decision()
+
+
+api = gr.mount_gradio_app(
+    api,
+    app,
+    path="/"
+)
+
+
+# ============================================================
 # RENDER SERVER
 # ============================================================
 
@@ -609,7 +666,8 @@ if __name__ == "__main__":
         )
     )
 
-    app.launch(
-        server_name="0.0.0.0",
-        server_port=port
+    uvicorn.run(
+        api,
+        host="0.0.0.0",
+        port=port
     )
