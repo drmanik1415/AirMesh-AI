@@ -621,17 +621,16 @@ ESP32 and deterministic failsafe logic.
         return "", "", "", "", None
 
 
-reset_button.click(
-    fn=reset_dashboard,
-    outputs=[
-        zone_a,
-        zone_b,
-        zone_c,
-        master_output,
-        trend_plot
-    ]
-)
-
+    reset_button.click(
+        fn=reset_dashboard,
+        outputs=[
+            zone_a,
+            zone_b,
+            zone_c,
+            master_output,
+            trend_plot
+        ]
+    )
 
 # ============================================================
 # API FOR MASTER ESP32
