@@ -513,6 +513,9 @@ with gr.Blocks(
         "Analyze AirMesh Network",
         variant="primary"
     )
+    reset_button = gr.Button(
+    "Reset Dashboard"
+)
 
     gr.Markdown(
         "## Zone Intelligence"
@@ -577,6 +580,20 @@ ESP32 and deterministic failsafe logic.
             trend_plot
         ]
     )
+    def reset_dashboard():
+        return "", "", "", "", None
+
+
+reset_button.click(
+    fn=reset_dashboard,
+    outputs=[
+        zone_a,
+        zone_b,
+        zone_c,
+        master_output,
+        trend_plot
+    ]
+)
 
 
 # ============================================================
