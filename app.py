@@ -9,6 +9,7 @@ import pandas as pd
 from fastapi import FastAPI
 import uvicorn
 
+from fastapi.responses import RedirectResponse
 
 # ============================================================
 # AIRMESH AI — DEPLOYMENT CONFIGURATION
@@ -646,10 +647,17 @@ def api_decision():
     return get_master_decision()
 
 
+@api.get("/")
+def home():
+    return RedirectResponse(
+        url="/dashboard"
+    )
+
+
 api = gr.mount_gradio_app(
     api,
     app,
-    path="/"
+    path="/dashboard"
 )
 
 
